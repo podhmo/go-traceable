@@ -1,18 +1,15 @@
 package main
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/podhmo/go-traceable/http"
 )
 
 func main() {
-	if err := run(); err != nil {
-		log.Fatalf("%+v", err)
+	resp, err := http.Get("https://example.com")
+	if err != nil {
+		panic(err)
 	}
-}
-
-func run() error {
-	http.Get("https://example.com")
-	return nil
+	fmt.Println(resp.Status)
 }
