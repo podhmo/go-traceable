@@ -1,18 +1,16 @@
 package httptrace
 
 import (
-	"io"
 	"net/http"
 )
 
 // Patch :
-func Patch(w io.Writer) (teardown func()) {
+func Patch() (teardown func()) {
 	previousTransport := http.DefaultTransport
 	previousClient := http.DefaultClient
 
-	transport := WrapTransport(previousTransport, StderrOutput)
-	http.DefaultTransport = transport
-	http.DefaultClient = &http.Client{Transport: transport}
+	http.DefaultTransport = DefaultTransport
+	http.DefaultClient = DefaultClient
 	return func() {
 		http.DefaultTransport = previousTransport
 		http.DefaultClient = previousClient
