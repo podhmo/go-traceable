@@ -22,7 +22,7 @@ func init() {
 	}
 
 	if path != "" {
-		transport := WrapTransport(http.DefaultTransport, Constant(os.Stderr))
+		transport := WrapTransport(http.DefaultTransport, StderrOutput)
 		DefaultTransport = transport
 		DefaultClient = &http.Client{Transport: transport}
 	}
