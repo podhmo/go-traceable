@@ -22,7 +22,12 @@ func init() {
 	}
 
 	if path != "" {
-		transport := WrapTransport(http.DefaultTransport, StderrOutput)
+		var transport http.RoundTripper
+		if _, err := os.Stat(path); !os.IsNotExist(err) {
+			transport = WrapTransport(http.DefaultTransport, MustFileOutput(path))
+		} else {
+			transport = WrapTransport(http.DefaultTransport, StderrOutput)
+		}
 		DefaultTransport = transport
 		DefaultClient = &http.Client{Transport: transport}
 	}
