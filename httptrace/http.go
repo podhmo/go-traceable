@@ -23,7 +23,9 @@ func init() {
 
 	if path != "" {
 		var transport http.RoundTripper
-		if _, err := os.Stat(path); !os.IsNotExist(err) {
+		if os.Getenv("TRACE_FORCE") != "" {
+			transport = WrapTransport(http.DefaultTransport, MustFileOutput(path))
+		} else if _, err := os.Stat(path); !os.IsNotExist(err) {
 			transport = WrapTransport(http.DefaultTransport, MustFileOutput(path))
 		} else {
 			transport = WrapTransport(http.DefaultTransport, StderrOutput)
