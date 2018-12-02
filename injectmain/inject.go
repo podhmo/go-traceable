@@ -15,7 +15,7 @@ import (
 )
 
 // Process :
-func Process(targetFile, template string, modifiers ...func(*ast.File) error) ([]byte, error) {
+func Process(targetFile, template string, modifiers ...func(*token.FileSet, *ast.File) error) ([]byte, error) {
 	fset := token.NewFileSet()
 	source, err := ioutil.ReadFile(targetFile)
 	if err != nil {
@@ -39,7 +39,7 @@ func Process(targetFile, template string, modifiers ...func(*ast.File) error) ([
 
 	for _, m := range modifiers {
 		// for example, calling astutil.AddImport()
-		if err := m(f); err != nil {
+		if err := m(fset, f); err != nil {
 			return nil, errors.Wrap(err, "modify")
 		}
 	}
