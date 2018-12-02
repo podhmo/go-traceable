@@ -1,16 +1,20 @@
-main.go
+## patch
 
 ```go
 package main
 
 import (
 	"fmt"
+	"net/http"
+	"os"
 
 	"github.com/podhmo/go-traceable/httptrace"
 )
 
 func main() {
-	resp, err := httptrace.Get("https://example.com")
+	teardown := httptrace.Patch()
+	defer teardown()
+	resp, err := http.Get("https://example.com")
 	if err != nil {
 		panic(err)
 	}
@@ -92,26 +96,3 @@ X-Cache: HIT
 200 OK
 ```
 
-## patch
-
-```go
-package main
-
-import (
-	"fmt"
-	"net/http"
-	"os"
-
-	"github.com/podhmo/go-traceable/httptrace"
-)
-
-func main() {
-	teardown := httptrace.Patch()
-	defer teardown()
-	resp, err := http.Get("https://example.com")
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(resp.Status)
-}
-```

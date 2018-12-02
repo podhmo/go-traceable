@@ -3,17 +3,11 @@ package main
 import (
 	"context"
 	"log"
-	"os"
 
 	"github.com/google/go-github/github"
-	"github.com/k0kubun/pp"
-	"github.com/podhmo/go-traceable/httptrace"
 )
 
 func main() {
-	teardown := httptrace.Patch(os.Stderr)
-	defer teardown()
-
 	if err := run(); err != nil {
 		log.Fatalf("%+v", err)
 	}
@@ -24,7 +18,15 @@ func run() error {
 	ctx := context.Background()
 	owner := "podhmo"
 	repo := "go-traceable"
-	result, _, err := client.Repositories.ListReleases(ctx, owner, repo, nil)
-	pp.Println(result, err)
+	result, _, err := client.Repositories.ListContributors(ctx, owner, repo, nil)
+	if err != nil {
+		return err
+	}
+	_ = result
+	// encoder := json.NewEncoder(os.Stdout)
+	// encoder.SetIndent("", "  ")
+	// if err := encoder.Encode(result); err != nil {
+	//     return err
+	// }
 	return nil
 }
