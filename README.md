@@ -6,7 +6,7 @@ calling [httptrace/_example/github/main.go](httptrace/_example/github/main.go) w
 
 ```console
 $ go get -v github.com/podhmo/go-traceable/cmd/go-run-httptrace
-$ go-run-httptrace _example/github/main.go
+$ go-run-httptrace httptrace/_example/github/main.go
 2018/12/02 22:03:07 parse httptrace/_example/github/main.go
 2018/12/02 22:03:07 transform AST
 2018/12/02 22:03:07 format
@@ -46,4 +46,22 @@ X-Xss-Protection: 1; mode=block
 0
 
 2018/12/02 22:03:08 rollback httptrace/_example/github/main.go
+```
+
+output to file
+
+```console
+$ mkdir -p output
+$ TRACE=output go-run-httptrace httptrace/_example/github/main.go
+2018/12/02 22:09:01 parse httptrace/_example/github/main.go
+2018/12/02 22:09:01 transform AST
+2018/12/02 22:09:01 format
+running via github.com/podhmo/go-traceable/cmd/go-run-httptrace/
+2018/12/02 22:09:02 trace to 0001https:@@api.github.com@repos@podhmo@go-traceable@contributors
+2018/12/02 22:09:03 rollback httptrace/_example/github/main.go
+$ tree output
+output
+└── 0001https:@@api.github.com@repos@podhmo@go-traceable@contributors
+
+0 directories, 1 file
 ```
