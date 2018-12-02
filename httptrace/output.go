@@ -43,7 +43,8 @@ func (o *fileOutput) GetWriter(req *http.Request) (io.WriteCloser, error) {
 
 func (o *fileOutput) FileName(req *http.Request) string {
 	i := atomic.AddInt64(&o.i, 1)
-	return fmt.Sprintf("%04d%s", i, strings.Replace(req.URL.String(), "/", "@", -1))
+	method := req.Method
+	return fmt.Sprintf("%04d%s@%s", i, method, strings.Replace(req.URL.String(), "/", "@", -1))
 }
 
 // FileOutput :
