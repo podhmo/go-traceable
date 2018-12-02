@@ -106,7 +106,7 @@ import (
 )
 
 func main() {
-	teardown := httptrace.Patch(os.Stderr)
+	teardown := httptrace.Patch()
 	defer teardown()
 	resp, err := http.Get("https://example.com")
 	if err != nil {
