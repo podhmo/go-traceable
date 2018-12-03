@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"strings"
 
+	_ "github.com/podhmo/go-traceable/httptrace" // for go get
 	"github.com/podhmo/go-traceable/injectmain"
 	"golang.org/x/tools/go/ast/astutil"
 )
