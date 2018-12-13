@@ -8,7 +8,10 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/signal"
 	"strings"
+	"sync"
+	"syscall"
 
 	_ "github.com/podhmo/go-traceable/httptrace" // for go get
 	"github.com/podhmo/go-traceable/injectmain"
@@ -52,15 +55,22 @@ func run() error {
 	if err != nil {
 		return err
 	}
+
+	var once sync.Once
+	rollback := func() {
+		once.Do(func() {
+			log.Printf("rollback %s\n", mainFile)
+			if err := ioutil.WriteFile(mainFile, originalSource, 0744); err != nil {
+				log.Fatal(err)
+			}
+		})
+	}
+	defer rollback()
+	setAtExitRollback(rollback)
+
 	if err := ioutil.WriteFile(mainFile, source, 0744); err != nil {
 		return err
 	}
-	defer func() {
-		log.Printf("rollback %s\n", mainFile)
-		if err := ioutil.WriteFile(mainFile, originalSource, 0744); err != nil {
-			log.Fatal(err)
-		}
-	}()
 
 	args := []string{"run"}
 	args = append(args, os.Args[1:]...)
@@ -86,6 +96,21 @@ func RunTransformed(cmd string, args []string) error {
 		c.Env = append(c.Env, "TRACE=1")
 	}
 	return c.Run()
+}
+
+func setAtExitRollback(rollback func()) {
+	c := make(chan os.Signal)
+	signal.Notify(c,
+		syscall.SIGHUP,
+		syscall.SIGTERM,
+		syscall.SIGINT,
+		syscall.SIGQUIT,
+	)
+	go func() {
+		<-c
+		rollback()
+		signal.Stop(c)
+	}()
 }
 
 // TODO: handing permission, correctly
