@@ -46,7 +46,7 @@ func (t *TraceTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 // WrapTransport :
 func WrapTransport(base http.RoundTripper, getwriter func(*http.Request) (io.WriteCloser, error)) http.RoundTripper {
 	return &TraceTransport{
-		Transport: http.DefaultTransport,
+		Transport: base,
 		GetWriter: getwriter,
 	}
 }
